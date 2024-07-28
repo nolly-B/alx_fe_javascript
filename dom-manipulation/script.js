@@ -14,10 +14,10 @@ const newQuoteButton = document.getElementById("newQuote");
 const newQuoteText = document.getElementById("newQuoteText");
 const newQuoteCategory = document.getElementById("newQuoteCategory");
 
-function showRandomQuote() {
+function displayRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
-  quoteDisplay.textContent = `${randomQuote.text}   
+  quoteDisplay.innerHTML = `${randomQuote.text}   
  - ${randomQuote.category}`;
 }
 
@@ -58,4 +58,4 @@ function addQuote() {
   showRandomQuote();
 }
 
-newQuoteButton.addEventListener("click", showRandomQuote);
+newQuoteButton.addEventListener("click", displayRandomQuote);

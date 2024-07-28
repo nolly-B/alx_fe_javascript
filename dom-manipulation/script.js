@@ -153,35 +153,28 @@ loadLastFilter();
 filterQuotes();
 createAddQuoteForm();
 
-const apiBaseUrl = "https://jsonplaceholder.typicode.com/posts";
+const SYNC_INTERVAL = 5000;
 
-function fetchQuotesFromServer() {
-  fetch(apiBaseUrl)
-    .then((response) => response.json())
-    .then((data) => {
-      const serverQuotes = data.map((post) => ({
-        text: post.title,
-        category: "Server Quote",
-      }));
-
-      console.log("Quotes fetched from server:", serverQuotes);
-    })
-    .catch((error) => {
-      console.error("Error fetching quotes:", error);
-    });
-}
-setInterval(fetchQuotesFromServer, 5000);
-
-function syncData() {
-  fetchQuotesFromServer();
+async function fetchQuotesFromServer() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const serverQuotes = await response.json();
+  return serverQuotes;
 }
 
-syncData();
+async function syncData() {
+  try {
+    const serverQuotes = await fetchQuotesFromServer();
 
-function handleConflict(localQuote, serverQuote) {
-  return serverQuote;
+    quotes = serverQuotes;
+    saveQuotes();
+  } catch (error) {
+    console.error("Error syncing data:", error);
+  }
 }
 
-function showNotification(message) {
-  console.log(message);
+function startSync() {
+  syncData();
+  setInterval(syncData, SYNC_INTERVAL);
 }
+
+startSync();

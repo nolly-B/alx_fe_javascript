@@ -153,28 +153,59 @@ loadLastFilter();
 filterQuotes();
 createAddQuoteForm();
 
-const SYNC_INTERVAL = 5000;
+const API_BASE_URL = "https://jsonplaceholder.typicode.com/posts";
 
 async function fetchQuotesFromServer() {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const serverQuotes = await response.json();
-  return serverQuotes;
-}
-
-async function syncData() {
   try {
-    const serverQuotes = await fetchQuotesFromServer();
+    const response = await fetch(API_BASE_URL);
+    const data = await response.json();
 
-    quotes = serverQuotes;
-    saveQuotes();
+    const quotesFromServer = data.map((post) => ({
+      text: post.title,
+      category: post.body,
+    }));
+    return quotesFromServer;
   } catch (error) {
-    console.error("Error syncing data:", error);
+    console.error("Error fetching quotes:", error);
+    return [];
   }
 }
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
 
-function startSync() {
-  syncData();
-  setInterval(syncData, SYNC_INTERVAL);
+  localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+  quotes = serverQuotes;
+  console.log("Quotes synced with server");
 }
 
+async function startSync() {
+  setInterval(syncQuotes, 5000);
+}
+
+async function addQuote(event) {
+  event.preventDefault();
+
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: newQuoteText, body: newQuoteCategory }),
+    });
+    const data = await response.json();
+    console.log("Quote added to server:", data);
+  } catch (error) {
+    console.error("Error adding quote:", error);
+  }
+
+  saveQuotes();
+}
+
+loadQuotes();
+populateCategoryFilter();
+loadLastFilter();
+filterQuotes();
+createAddQuoteForm();
 startSync();

@@ -43,6 +43,10 @@ function addQuote() {
     text: newQuoteText.value,
     category: newQuoteCategory.value,
   };
+  const categories = getCategories();
+  populateCategoryFilter();
+
+  saveQuotes();
   quotes.push(newQuote);
   newQuoteText.value = "";
   newQuoteCategory.value = "";
@@ -92,3 +96,59 @@ createAddQuoteForm();
 
 const importFileInput = document.getElementById("importFile");
 importFileInput.onchange = importFromJsonFile;
+
+function getCategories() {
+  const categories = quotes.map((quote) => quote.category);
+  return [...new Set(categories)];
+}
+
+function populateCategoryFilter() {
+  const categories = getCategories();
+  const filterSelect = document.getElementById("categoryFilter");
+
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.text = category;
+    filterSelect.appendChild(option);
+  });
+}
+
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter((quote) => quote.category === selectedCategory);
+
+  localStorage.setItem("selectedCategory", selectedCategory);
+}
+
+function loadLastFilter() {
+  const storedCategory = localStorage.getItem("selectedCategory");
+  if (storedCategory) {
+    document.getElementById("categoryFilter").value = storedCategory;
+  }
+}
+
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter((quote) => quote.category === selectedCategory);
+
+  localStorage.setItem("selectedCategory", selectedCategory);
+}
+function loadLastFilter() {
+  const storedCategory = localStorage.getItem("selectedCategory");
+  if (storedCategory) {
+    document.getElementById("categoryFilter").value = storedCategory;
+  }
+}
+
+loadQuotes();
+populateCategoryFilter();
+loadLastFilter();
+filterQuotes();
+createAddQuoteForm();

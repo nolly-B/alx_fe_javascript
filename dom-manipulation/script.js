@@ -102,7 +102,7 @@ function getCategories() {
   return [...new Set(categories)];
 }
 
-function populateCategoryFilter() {
+function populateCategories() {
   const categories = getCategories();
   const filterSelect = document.getElementById("categoryFilter");
 
@@ -148,7 +148,7 @@ function loadLastFilter() {
 }
 
 loadQuotes();
-populateCategoryFilter();
+populateCategories();
 loadLastFilter();
 filterQuotes();
 createAddQuoteForm();

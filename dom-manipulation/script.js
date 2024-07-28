@@ -152,3 +152,36 @@ populateCategories();
 loadLastFilter();
 filterQuotes();
 createAddQuoteForm();
+
+const apiBaseUrl = "https://jsonplaceholder.typicode.com/posts";
+
+function fetchQuotesFromServer() {
+  fetch(apiBaseUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      const serverQuotes = data.map((post) => ({
+        text: post.title,
+        category: "Server Quote",
+      }));
+
+      console.log("Quotes fetched from server:", serverQuotes);
+    })
+    .catch((error) => {
+      console.error("Error fetching quotes:", error);
+    });
+}
+setInterval(fetchQuotesFromServer, 5000);
+
+function syncData() {
+  fetchQuotesFromServer();
+}
+
+syncData();
+
+function handleConflict(localQuote, serverQuote) {
+  return serverQuote;
+}
+
+function showNotification(message) {
+  console.log(message);
+}

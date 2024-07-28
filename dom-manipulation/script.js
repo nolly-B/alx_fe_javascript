@@ -177,6 +177,7 @@ async function syncQuotes() {
   localStorage.setItem("quotes", JSON.stringify(serverQuotes));
   quotes = serverQuotes;
   console.log("Quotes synced with server");
+  alert("Quotes synced with server!");
 }
 
 async function startSync() {
